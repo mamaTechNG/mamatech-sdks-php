@@ -1,0 +1,21 @@
+name: PHP SDK CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+      - run: php -l src/FinExternalClient.php
+      - run: php -l src/FinExternalSdkError.php
+      - run: php tests/FinExternalClientTest.php

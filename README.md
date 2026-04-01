@@ -37,5 +37,5 @@ print_r($login);
 Release:
 
 - Connect this repo in Packagist
-- Push a semantic tag like `v0.1.0`
+- Push a semantic tag like `v0.1.2`
 - Refresh the package in Packagist if it does not pick the tag up automatically

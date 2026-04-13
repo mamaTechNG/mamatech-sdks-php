@@ -37,6 +37,18 @@ final class FinExternalClient
         return $this->requestJson('/auth/v1/external/user', 'POST', $payload);
     }
 
+    public function bulkCreateExternalUsers(array $users, bool $skipExisting = false): array
+    {
+        return $this->requestJson('/auth/v1/external/users/bulk', 'POST', [
+            'code' => $this->appCode,
+            'secretKey' => $this->secretKey,
+            'users' => $users,
+            'options' => [
+                'skipExisting' => $skipExisting,
+            ],
+        ]);
+    }
+
     public function loginExternalUser(string $thirdPartyId): array
     {
         return $this->requestJson('/auth/v1/external/login', 'POST', [

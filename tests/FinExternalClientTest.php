@@ -29,6 +29,21 @@ assertTrue($captured['payload']['secretKey'] === 'secret-key', 'env secret key m
 assertTrue($login['token'] === 'jwt', 'login token mismatch');
 
 $captured = [];
+$client = new FinExternalClient(null, null, null, function (string $url, string $method, array $headers, ?array $payload) use (&$captured): array {
+    $captured = compact('url', 'method', 'headers', 'payload');
+    return ['status' => 200, 'body' => '{"summary":{"total":2,"created":1,"skipped":1,"failed":0},"results":[{"index":0,"thirdPartyId":"cust_1","status":"CREATED","userId":11},{"index":1,"thirdPartyId":"cust_2","status":"SKIPPED_EXISTING"}]}'];
+});
+$bulk = $client->bulkCreateExternalUsers([
+    ['firstName' => 'Ada', 'lastName' => 'Lovelace', 'thirdPartyId' => 'cust_1'],
+    ['firstName' => 'Grace', 'lastName' => 'Hopper', 'thirdPartyId' => 'cust_2'],
+], true);
+assertTrue($captured['url'] === 'https://api.fin.io/auth/v1/external/users/bulk', 'bulk url mismatch');
+assertTrue($captured['payload']['code'] === 'app-code', 'bulk env app code mismatch');
+assertTrue($captured['payload']['secretKey'] === 'secret-key', 'bulk env secret key mismatch');
+assertTrue($captured['payload']['options']['skipExisting'] === true, 'bulk skipExisting mismatch');
+assertTrue($bulk['summary']['created'] === 1, 'bulk summary mismatch');
+
+$captured = [];
 $client = new FinExternalClient('https://api.fin.io', 'app-code', 'secret-key', function (string $url, string $method, array $headers, ?array $payload) use (&$captured): array {
     $captured = compact('url', 'method', 'headers', 'payload');
     return ['status' => 200, 'body' => '[]'];
